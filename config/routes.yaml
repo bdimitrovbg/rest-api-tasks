@@ -1,0 +1,6 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+rest_api_tasks:
+  prefix: /tasks/rest/v1/
+  resource: ./routes/rest_api_tasks_routes.yaml

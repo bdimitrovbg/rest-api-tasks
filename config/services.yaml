@@ -1,0 +1,63 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: false      # Automatically injects dependencies in your services.
+        autoconfigure: false # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+#    Dimitrov\RestApiTasks\:
+#        resource: '../src/'
+#        exclude:
+#            - '../src/DependencyInjection/'
+#            - '../src/Entity/'
+#            - '../src/Kernel.php'
+#            - '../src/Tests/'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    #Dimitrov\RestApiTasks\Controller\:
+    #    resource: '../src/Controller/'
+    #    tags: ['controller.service_arguments']
+
+    dimitrov_rest_api_tasks.serializer.task:
+        class: 'Dimitrov\RestApiTasks\Serializer\TaskSerializer'
+
+    dimitrov_rest_api_tasks.serializer.task_list:
+        class: 'Dimitrov\RestApiTasks\Serializer\ListSerializer'
+        arguments:
+            - '@dimitrov_rest_api_tasks.serializer.task'
+            - 'tasks'
+
+    dimitrov_rest_api_tasks.service.task_bash_script_generator:
+        class: 'Dimitrov\RestApiTasks\Service\TaskBashScriptGenerator'
+
+    dimitrov_rest_api_tasks.dependency_graph.dependency_graph:
+        class: 'Dimitrov\RestApiTasks\DependencyGraph\DependencyGraph'
+
+    dimitrov_rest_api_tasks.service.task_dependency_graph_manager:
+        class: 'Dimitrov\RestApiTasks\Service\TaskDependencyGraphManager'
+        arguments:
+            - '@dimitrov_rest_api_tasks.dependency_graph.dependency_graph'
+
+    dimitrov_rest_api_tasks.controller.task_controller:
+        class: 'Dimitrov\RestApiTasks\Controller\TasksController'
+        public: true
+        arguments:
+            - '@dimitrov_rest_api_tasks.service.task_dependency_graph_manager'
+            - '@dimitrov_rest_api_tasks.service.task_bash_script_generator'
+            - '@dimitrov_rest_api_tasks.serializer.task_list'
+#        tags:
+#            - 'controller.service_arguments'
+        calls:
+            - [setContainer,['@service_container']]
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

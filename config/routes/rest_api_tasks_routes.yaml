@@ -1,0 +1,9 @@
+bash_script_generate:
+  path: /generate-bash-script
+  methods: [POST]
+  controller: dimitrov_rest_api_tasks.controller.task_controller::generateBashScript
+
+resolve_dependancies:
+  path: /resolve-dependencies
+  methods: [POST]
+  controller: dimitrov_rest_api_tasks.controller.task_controller::resolveDependencies
