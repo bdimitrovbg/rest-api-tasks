@@ -1,7 +1,7 @@
 # rest-api-tasks
 REST API for simple bash tasks with dependencies.
 
-#Install
+# Install
 1. Pull the repository
 2. In project root execute
    
@@ -11,16 +11,16 @@ REST API for simple bash tasks with dependencies.
 
     2.3. `docker exec rest-api-tasks composer install`
 
-#Tests
-##Unit with phpunit
+# Tests
+## Unit with phpunit
 `docker exec rest-api-tasks bin/simple-phpunit`
-##Functional with Postman
+## Functional with Postman
 1. Import the postman collection located in `resources/postman/tasks_rest_api_postman_collection.json`
 2. Run the collection and check the tests results.
 
-#How to use
-##Endpoints
-###Context:
+# How to use
+## Endpoints
+### Context:
 Both endpoints require request body of the following type:
 <pre><code>
 {
@@ -56,7 +56,7 @@ Both endpoints require request body of the following type:
 </code></pre>
 
 
-###`POST` `http://localhost:4000/tasks/rest/v1/resolve-dependencies`
+### `POST` `http://localhost:4000/tasks/rest/v1/resolve-dependencies`
 This endpoint will resolve dependencies for request body submitted tasks 
 and will return response of the following type:
 <pre><code>
@@ -81,7 +81,7 @@ and will return response of the following type:
 </code></pre>
 
 
-###`POST` `http://localhost:4000/tasks/rest/v1/generate-bash-script`
+### `POST` `http://localhost:4000/tasks/rest/v1/generate-bash-script`
 This endpoint will resolve dependencies for request body submitted tasks
 and will generate bash script suitable for execution.
 <pre><code>
@@ -93,6 +93,6 @@ cat /tmp/file1
 rm /tmp/file1
 </code></pre>
 
-##Bash usage
+## Bash usage
 `curl -d @mytasks.json http://localhost:4000/tasks/rest/v1/generate-bash-script | bash`
 
