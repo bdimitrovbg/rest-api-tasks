@@ -23,34 +23,39 @@ class DependencyGraph
         $this->nodes = [];
     }
 
-    public function addNode(DependencyNode $node)
+    private function processNode(DependencyNode $node)
     {
         if (!isset($this->dependencies[$node->getHash()])) {
             $this->dependencies[$node->getHash()] = [];
             $this->nodes[$node->getHash()] = $node;
 
             foreach ($node->getDependencies() as $nodeDependency) {
-                $this->addDependency($node, $nodeDependency);
+                $this->addNode($node, $nodeDependency);
             }
         }
     }
 
-    public function addDependency(DependencyNode $node, DependencyNode $dependsOn)
+    public function addNode(DependencyNode $node, DependencyNode $nodeDependency = null)
     {
         if (!isset($this->dependencies[$node->getHash()])) {
-            $this->addNode($node);
+            $this->processNode($node);
         }
-        if (!isset($this->dependencies[$dependsOn->getHash()])) {
-            $this->addNode($dependsOn);
-        }
-        if (!in_array($dependsOn->getHash(), $this->dependencies[$node->getHash()], true)) {
-            $this->dependencies[$node->getHash()][] = $dependsOn->getHash();
-        }
+        if($nodeDependency !== null) {
+            if (!isset($this->dependencies[$nodeDependency->getHash()])) {
+                $this->processNode($nodeDependency);
+            }
+            if (!in_array($nodeDependency->getHash(), $this->dependencies[$node->getHash()], true)) {
+                $this->dependencies[$node->getHash()][] = $nodeDependency->getHash();
+            }
 
-        $node->dependsOn($dependsOn);
+            $node->addDependency($nodeDependency);
+        }
     }
 
-    public function findRootNodes(): array
+    /**
+     * @return DependencyNode[]
+     */
+    private function findRootNodes(): array
     {
         $rootNodes = $this->nodes;
         foreach ($this->dependencies as $nodeHash => $nodeDependencyHashes) {
@@ -72,19 +77,21 @@ class DependencyGraph
             return [];
         }
 
-        $resolved = new ArrayObject();
-        $seen = new ArrayObject();
+        $resolved = [];
+        $seen = [];
         foreach ($this->findRootNodes() as $rootNode) {
             $this->innerResolve($rootNode, $resolved, $seen);
         }
 
-        if ($resolved->count() !== count($this->nodes)) {
+        if (count($resolved) !== count($this->nodes)) {
             throw new DependencyGraphException('Resolved nodes do not match original nodes.');
         }
 
         return array_map(
-            function (DependencyNode $node) { return $node->getElement(); },
-            $resolved->getArrayCopy()
+            function (string $nodeHash) {
+                return $this->nodes[$nodeHash]->getElement();
+            },
+            $resolved
         );
     }
 
@@ -95,12 +102,12 @@ class DependencyGraph
      *
      * @throws DependencyGraphException
      */
-    private function innerResolve(DependencyNode $rootNode, ArrayObject $resolved, ArrayObject $seen)
+    private function innerResolve(DependencyNode $rootNode, array &$resolved, array &$seen)
     {
-        $seen->append($rootNode);
+        $seen[] = $rootNode->getHash();
         foreach ($rootNode->getDependencies() as $edge) {
-            if (!$this->arrayObjectContains($edge, $resolved)) {
-                if ($this->arrayObjectContains($edge, $seen)) {
+            if (!in_array($edge->getHash(), $resolved, true)) {
+                if (in_array($edge->getHash(), $seen, true)) {
                     throw new DependencyGraphException(
                         sprintf(
                             'Circular dependency detected: %s depends on %s',
@@ -113,7 +120,7 @@ class DependencyGraph
             }
         }
 
-        $resolved->append($rootNode);
+        $resolved[] = $rootNode->getHash();
     }
 
     public function getDependencies(): array
@@ -127,16 +134,5 @@ class DependencyGraph
     public function getNodes(): array
     {
         return $this->nodes;
-    }
-
-    private function arrayObjectContains(DependencyNode $needle, ArrayObject $haystack): bool
-    {
-        foreach ($haystack as $node) {
-            if ($node === $needle) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Dimitrov\RestApiTasks\DependencyGraph;
 
+use Dimitrov\RestApiTasks\Exception\DependencyGraphException;
+
 class DependencyNode
 {
     private string $hash;
@@ -31,10 +33,20 @@ class DependencyNode
         return $this->element;
     }
 
-    public function dependsOn(DependencyNode $node): self
+    /**
+     * @param DependencyNode $dependencyNode
+     * @return $this
+     *
+     * @throws DependencyGraphException
+     */
+    public function addDependency(DependencyNode $dependencyNode): self
     {
-        if (!in_array($node->getHash(), $this->dependencies, true)) {
-            $this->dependencies[$node->getHash()] = $node;
+        if($dependencyNode->getHash() === $this->getHash()) {
+            throw new DependencyGraphException('Can\'t add dependency to self.');
+        }
+
+        if (!in_array($dependencyNode->getHash(), $this->dependencies, true)) {
+            $this->dependencies[$dependencyNode->getHash()] = $dependencyNode;
         }
         return $this;
     }

@@ -11,22 +11,6 @@ services:
         autowire: false      # Automatically injects dependencies in your services.
         autoconfigure: false # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-#    Dimitrov\RestApiTasks\:
-#        resource: '../src/'
-#        exclude:
-#            - '../src/DependencyInjection/'
-#            - '../src/Entity/'
-#            - '../src/Kernel.php'
-#            - '../src/Tests/'
-
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
-    #Dimitrov\RestApiTasks\Controller\:
-    #    resource: '../src/Controller/'
-    #    tags: ['controller.service_arguments']
-
     dimitrov_rest_api_tasks.serializer.task:
         class: 'Dimitrov\RestApiTasks\Serializer\TaskSerializer'
 
@@ -36,8 +20,8 @@ services:
             - '@dimitrov_rest_api_tasks.serializer.task'
             - 'tasks'
 
-    dimitrov_rest_api_tasks.service.task_bash_script_generator:
-        class: 'Dimitrov\RestApiTasks\Service\TaskBashScriptGenerator'
+    dimitrov_rest_api_tasks.service.command_bash_script_generator:
+        class: 'Dimitrov\RestApiTasks\Service\CommandBashScriptGenerator'
 
     dimitrov_rest_api_tasks.dependency_graph.dependency_graph:
         class: 'Dimitrov\RestApiTasks\DependencyGraph\DependencyGraph'
@@ -52,12 +36,7 @@ services:
         public: true
         arguments:
             - '@dimitrov_rest_api_tasks.service.task_dependency_graph_manager'
-            - '@dimitrov_rest_api_tasks.service.task_bash_script_generator'
+            - '@dimitrov_rest_api_tasks.service.command_bash_script_generator'
             - '@dimitrov_rest_api_tasks.serializer.task_list'
-#        tags:
-#            - 'controller.service_arguments'
         calls:
             - [setContainer,['@service_container']]
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones

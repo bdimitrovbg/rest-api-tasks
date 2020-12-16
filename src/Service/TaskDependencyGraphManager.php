@@ -13,49 +13,49 @@ class TaskDependencyGraphManager
 {
     private DependencyGraph $dependencyGraph;
 
+    /** @var DependencyNode[]  */
+    private array $nodes;
+
     public function __construct(DependencyGraph $dependencyGraph)
     {
         $this->dependencyGraph = $dependencyGraph;
+        $this->nodes = [];
     }
 
     /**
      * @param Task[] $tasks
-     * @return self
+     *
+     * @return Task[]
      * @throws RestApiTasksException
      */
-    public function build(array $tasks): self
+    public function resolve(array $tasks): array
     {
-//        usort(
-//            $tasks,
-//            fn(Task $taskA,Task $taskB) => count($taskA->getDependencies()) <=> count($taskB->getDependencies())
-//        );
-        $nodes = [];
         foreach ($tasks as $task) {
-            if (isset($nodes[$task->getName()])) {
-                throw new RestApiTasksException('Duplicate Node');
+            if (isset($this->nodes[$task->getName()])) {
+                throw new RestApiTasksException(sprintf('Duplicate Node: %s', $task->getName()));
             }
 
-            $nodes[$task->getName()] = new DependencyNode($task);
+            $this->nodes[$task->getName()] = new DependencyNode($task);
         }
 
-        foreach ($nodes as $node) {
-            foreach ($node->getElement()->getDependencies() as $dependencyName) {
-                if (!isset($nodes[$dependencyName])) {
-                    throw new RestApiTasksException('Dependancy node does not exist.');
+        foreach ($this->nodes as $node) {
+            if(count($node->getElement()->getDependencies()) === 0){
+                $this->dependencyGraph->addNode($node);
+            } else {
+                foreach ($node->getElement()->getDependencies() as $dependencyName) {
+                    if (!isset($this->nodes[$dependencyName])) {
+                        throw new RestApiTasksException('Dependency node does not exist.');
+                    }
+                    $this->dependencyGraph->addNode($node, $this->nodes[$dependencyName]);
                 }
-                $node->dependsOn($nodes[$dependencyName]);
             }
-            $this->dependencyGraph->addNode($node);
         }
 
-        return $this;
+        return $this->dependencyGraph->resolve();
     }
 
-    /**
-     * @return Task[]
-     */
-    public function resolve(): array
+    public function getNodes()
     {
-        return $this->dependencyGraph->resolve();
+        return $this->nodes;
     }
 }

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Dimitrov\RestApiTasks\Controller;
 
+use Dimitrov\RestApiTasks\Entity\Task;
 use Dimitrov\RestApiTasks\Exception\RestApiTasksException;
 use Dimitrov\RestApiTasks\Serializer\ListSerializerInterface;
-use Dimitrov\RestApiTasks\Service\TaskBashScriptGenerator;
+use Dimitrov\RestApiTasks\Service\CommandBashScriptGenerator;
+use Dimitrov\RestApiTasks\Service\CommandScriptGeneratorInterface;
 use Dimitrov\RestApiTasks\Service\TaskDependencyGraphManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -17,12 +19,12 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 class TasksController extends AbstractFOSRestController
 {
     private TaskDependencyGraphManager $taskDependencyGraphManager;
-    private TaskBashScriptGenerator $bashScriptGenerator;
+    private CommandScriptGeneratorInterface $bashScriptGenerator;
     private ListSerializerInterface $taskListMapper;
 
     public function __construct(
         TaskDependencyGraphManager $taskDependencyGraphManager,
-        TaskBashScriptGenerator $bashScriptGenerator,
+        CommandScriptGeneratorInterface $bashScriptGenerator,
         ListSerializerInterface $taskListMapper
 
     )
@@ -38,10 +40,7 @@ class TasksController extends AbstractFOSRestController
      */
     public function resolveDependencies(Request $request): Response
     {
-        $tasks = $this->normalizeTaskRequestData($request);
-        $dependencyResolvedTasks = $this->taskDependencyGraphManager
-            ->build($tasks)
-            ->resolve();
+        $dependencyResolvedTasks = $this->processDependencies($request);
 
         return new Response(
             $this->normalizeTaskResponseData($dependencyResolvedTasks),
@@ -56,13 +55,9 @@ class TasksController extends AbstractFOSRestController
      */
     public function generateBashScript(Request $request): Response
     {
-        $tasks = $this->normalizeTaskRequestData($request);
-        $dependencyResolvedTasks = $this->taskDependencyGraphManager
-            ->build($tasks)
-            ->resolve();
+        $dependencyResolvedTasks = $this->processDependencies($request);
 
         $script = $this->bashScriptGenerator->generate($dependencyResolvedTasks);
-
         return new Response(
             $script,
             200,
@@ -70,22 +65,34 @@ class TasksController extends AbstractFOSRestController
         );
     }
 
-    private function normalizeTaskRequestData(Request $request): array
+    /**
+     * @param Request $request
+     * @return Task[]
+     */
+    private function processDependencies(Request $request): array
     {
         try {
-            $tasks = $this->taskListMapper->serialize($this->getRequestData($request));
-        } catch (RestApiTasksException $exception) {
-            throw new HttpException(400, sprintf('Invalid data. %s', $exception->getMessage()));
+            $tasks = $this->taskListMapper->serialize($this->normalizeTaskRequestData($request));
+            $processedTasks = $this->taskDependencyGraphManager->resolve($tasks);
+        } catch (RestApiTasksException $restApiTasksException) {
+            throw new HttpException(400, sprintf('API Error: %s', $restApiTasksException->getMessage()));
+        } catch (Exception $exception) {
+            throw new HttpException(400, sprintf('Generic error: %s', $exception->getMessage()));
         }
 
-        return $tasks;
+        return $processedTasks;
     }
 
-    private function getRequestData(Request $request): array
+    /**
+     * @param Request $request
+     * @return mixed[]
+     * @throws RestApiTasksException
+     */
+    private function normalizeTaskRequestData(Request $request): array
     {
         $data = json_decode($request->getContent(), true);
         if ($data === null || json_last_error() !== JSON_ERROR_NONE) {
-            throw new HttpException(400, "Invalid data");
+            throw new RestApiTasksException("Invalid data");
         }
 
         return $data;

@@ -4,8 +4,8 @@ services:
     container_name: rest-api-tasks
     build:
         context: .
-        dockerfile: Dockerfile
+        dockerfile: resources/docker/Dockerfile
     ports:
-      - "4000:4000"
+      - 4000:4000
     volumes:
       - .:/app
