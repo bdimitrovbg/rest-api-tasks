@@ -13,7 +13,7 @@ class TaskDependencyGraphManager
 {
     private DependencyGraph $dependencyGraph;
 
-    /** @var DependencyNode[]  */
+    /** @var DependencyNode[] */
     private array $nodes;
 
     public function __construct(DependencyGraph $dependencyGraph)
@@ -26,6 +26,7 @@ class TaskDependencyGraphManager
      * @param Task[] $tasks
      *
      * @return Task[]
+     *
      * @throws RestApiTasksException
      */
     public function resolve(array $tasks): array
@@ -39,7 +40,7 @@ class TaskDependencyGraphManager
         }
 
         foreach ($this->nodes as $node) {
-            if(count($node->getElement()->getDependencies()) === 0){
+            if (count($node->getElement()->getDependencies()) === 0) {
                 $this->dependencyGraph->addNode($node);
             } else {
                 foreach ($node->getElement()->getDependencies() as $dependencyName) {
@@ -54,7 +55,7 @@ class TaskDependencyGraphManager
         return $this->dependencyGraph->resolve();
     }
 
-    public function getNodes()
+    public function getNodes(): array
     {
         return $this->nodes;
     }

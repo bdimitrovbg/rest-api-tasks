@@ -1,10 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Dimitrov\RestApiTasks\Service;
-
-
-use Dimitrov\RestApiTasks\Entity\Task;
 
 interface CommandScriptGeneratorInterface
 {

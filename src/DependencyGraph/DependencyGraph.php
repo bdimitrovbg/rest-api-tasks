@@ -40,7 +40,7 @@ class DependencyGraph
         if (!isset($this->dependencies[$node->getHash()])) {
             $this->processNode($node);
         }
-        if($nodeDependency !== null) {
+        if ($nodeDependency !== null) {
             if (!isset($this->dependencies[$nodeDependency->getHash()])) {
                 $this->processNode($nodeDependency);
             }
@@ -63,12 +63,13 @@ class DependencyGraph
                 unset($rootNodes[$nodeDependencyHash]);
             }
         }
+
         return $rootNodes;
     }
 
     /**
-     *
      * @return DependencyNode[]
+     *
      * @throws DependencyGraphException
      */
     public function resolve(): array
@@ -123,6 +124,9 @@ class DependencyGraph
         $resolved[] = $rootNode->getHash();
     }
 
+    /**
+     * @return string[]
+     */
     public function getDependencies(): array
     {
         return $this->dependencies;

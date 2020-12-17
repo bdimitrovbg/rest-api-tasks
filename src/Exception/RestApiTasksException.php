@@ -8,5 +8,4 @@ use Exception;
 
 class RestApiTasksException extends Exception
 {
-
 }

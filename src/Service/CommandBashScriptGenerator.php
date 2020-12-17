@@ -14,13 +14,14 @@ class CommandBashScriptGenerator implements CommandScriptGeneratorInterface
      * @param CommandInterface[] $commands
      *
      * @return string
+     *
      * @throws RestApiTasksException
      */
     public function generate(array $commands): string
     {
         $script = sprintf('%s%s%s', self::HEADER, PHP_EOL, PHP_EOL);
         foreach ($commands as $command) {
-            if(!$command instanceof CommandInterface) {
+            if (!$command instanceof CommandInterface) {
                 throw new RestApiTasksException('Command expected');
             }
 

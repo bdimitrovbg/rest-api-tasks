@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dimitrov\RestApiTasks\Entity;
 
-
 use Dimitrov\RestApiTasks\DependencyGraph\DependencyNodeElementInterface;
 use Dimitrov\RestApiTasks\Service\CommandInterface;
 
@@ -34,9 +33,10 @@ class Task implements DependencyNodeElementInterface, CommandInterface
         return $this->command;
     }
 
-    public function setCommand(string $command): Task
+    public function setCommand(?string $command): Task
     {
         $this->command = $command;
+
         return $this;
     }
 
@@ -55,6 +55,7 @@ class Task implements DependencyNodeElementInterface, CommandInterface
     public function setDependencies(array $dependencies): Task
     {
         $this->dependencies = $dependencies;
+
         return $this;
     }
 }

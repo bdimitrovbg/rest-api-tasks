@@ -9,8 +9,8 @@ use Dimitrov\RestApiTasks\Exception\RestApiTasksException;
 class BaseSerializer
 {
     /**
-     * @param array $data
-     * @param array $keys
+     * @param mixed[] $data
+     * @param string[] $keys
      *
      * @throws RestApiTasksException
      */

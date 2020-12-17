@@ -35,19 +35,21 @@ class DependencyNode
 
     /**
      * @param DependencyNode $dependencyNode
+     *
      * @return $this
      *
      * @throws DependencyGraphException
      */
     public function addDependency(DependencyNode $dependencyNode): self
     {
-        if($dependencyNode->getHash() === $this->getHash()) {
+        if ($dependencyNode->getHash() === $this->getHash()) {
             throw new DependencyGraphException('Can\'t add dependency to self.');
         }
 
         if (!in_array($dependencyNode->getHash(), $this->dependencies, true)) {
             $this->dependencies[$dependencyNode->getHash()] = $dependencyNode;
         }
+
         return $this;
     }
 

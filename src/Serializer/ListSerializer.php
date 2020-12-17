@@ -12,7 +12,7 @@ class ListSerializer implements ListSerializerInterface, ListDeserializerInterfa
     private SerializerInterface $mapper;
     private ?string $containerKey;
 
-    public function __construct(SerializerInterface $mapper, string $containerKey = null)
+    public function __construct(SerializerInterface $mapper, ?string $containerKey = null)
     {
         $this->mapper = $mapper;
         $this->containerKey = $containerKey;
@@ -20,6 +20,7 @@ class ListSerializer implements ListSerializerInterface, ListDeserializerInterfa
 
     /**
      * @param mixed[] $data
+     *
      * @return Task[]
      *
      * @throws RestApiTasksException
@@ -43,6 +44,7 @@ class ListSerializer implements ListSerializerInterface, ListDeserializerInterfa
 
     /**
      * @param Task[] $entities
+     *
      * @return mixed[]
      */
     public function deserialize(array $entities): array

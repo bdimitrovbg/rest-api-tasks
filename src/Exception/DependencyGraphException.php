@@ -6,7 +6,6 @@ namespace Dimitrov\RestApiTasks\Exception;
 
 use Exception;
 
-class DependencyGraphException extends  Exception
+class DependencyGraphException extends Exception
 {
-
 }

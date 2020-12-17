@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "48da87c6-f56a-4c0d-a235-e5b55a225e14",
+		"_postman_id": "7fd1c4bf-bcf5-411a-ab26-d5b3ff846bea",
 		"name": "Tasks REST API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,17 +14,13 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3ebec7bd-e531-437c-aced-0ef977e2b235",
+								"id": "4b20063c-817b-4b9e-ba49-ce9ae8dd9748",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
 									"const expected = [\r",
-									"    {\r",
-									"        \"name\": \"task-1a\",\r",
-									"        \"command\": \"touch /tmp/file1a\"\r",
-									"    },\r",
 									"    {\r",
 									"        \"name\": \"task-1\",\r",
 									"        \"command\": \"touch /tmp/file1\"\r",
@@ -57,7 +53,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"tasks\": [\r\n    {\r\n      \"name\": \"task-1\",\r\n      \"command\": \"touch /tmp/file1\"\r\n    },\r\n    {\r\n      \"name\": \"task-1a\",\r\n      \"command\": \"touch /tmp/file1a\"\r\n    },\r\n    {\r\n      \"name\": \"task-2\",\r\n      \"command\": \"cat /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-3\"\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"task-3\",\r\n      \"command\": \"echo 'Hello World!' > /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-1\"\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"task-4\",\r\n      \"command\": \"rm /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-2\",\r\n        \"task-3\"\r\n      ]\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"tasks\": [\r\n    {\r\n      \"name\": \"task-1\",\r\n      \"command\": \"touch /tmp/file1\"\r\n    },\r\n    {\r\n      \"name\": \"task-2\",\r\n      \"command\": \"cat /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-3\"\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"task-3\",\r\n      \"command\": \"echo 'Hello World!' > /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-1\"\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"task-4\",\r\n      \"command\": \"rm /tmp/file1\",\r\n      \"requires\": [\r\n        \"task-2\",\r\n        \"task-3\"\r\n      ]\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -82,7 +78,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "390573c4-2a00-4dc2-9ff6-311003f98525",
+								"id": "c2782931-82c4-4faf-8592-426e57a564fe",
 								"exec": [
 									"pm.test(\"Status code is 400\", function () {\r",
 									"    pm.response.to.have.status(400);\r",
@@ -121,7 +117,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "ba0b33f3-2ee3-40d6-8a2c-b3377ea6cfb3",
+						"id": "527cbb6c-31cc-4c68-a4b3-3092423abdee",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -131,7 +127,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f014b323-846c-4cf6-8b34-e313a96347b9",
+						"id": "adfff2f9-2229-4e9f-8e6e-5c703b0a4cb8",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -150,7 +146,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e682344d-16ec-4789-8a98-d8b62b3f29fb",
+								"id": "96e10c81-546b-41b3-a381-c3373207f950",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -205,7 +201,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ef0516a1-8806-485e-8cf9-001b725b784c",
+								"id": "910ceb67-ffce-4e4b-8971-72d60804c4ab",
 								"exec": [
 									"pm.test(\"Status code is 400\", function () {\r",
 									"    pm.response.to.have.status(400);\r",
@@ -244,7 +240,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "fc13986c-502b-4ee5-bb89-80d41afb8750",
+						"id": "1ee9de00-e472-427f-ba21-ad099d7698f1",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -254,7 +250,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "cddc2156-d8cc-401c-8668-a97263e6ac70",
+						"id": "f11e7537-eaf3-4854-9468-ddd3c55a4406",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -269,7 +265,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "647e25d9-53fa-4972-9afb-b38818e73222",
+				"id": "43f20c3b-c369-4a13-9271-e38a38dc4574",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -279,7 +275,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "8e7e6a02-e00e-4a8f-92cc-f66c47e448c2",
+				"id": "1cbc83d2-94fb-4e37-86e6-5f1fe7fb2dee",
 				"type": "text/javascript",
 				"exec": [
 					""
